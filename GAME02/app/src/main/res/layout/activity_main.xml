@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <LinearLayout
+        android:id="@+id/myView1"
+        android:layout_width="100dp"
+        android:layout_height="200dp"
+        android:background="#ffff0000"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="toolmenu" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="aclk"
+            android:text="Button1" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:onClick="bclk"
+            android:text="Button2" />
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Button3" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/myView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="■" />
+</RelativeLayout>
