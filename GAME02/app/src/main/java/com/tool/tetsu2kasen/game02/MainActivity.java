@@ -1,4 +1,4 @@
-/*
+﻿/*
 //Next do 残り時間を表示する
 //
 */
@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         aTimer = new Timer(false);
         aTimer.schedule(new TimerTask() {
             @Override
-            public void run() {
+            public void run() {//ここ等辺でおちる
                 aHandler.post(new Runnable() {
                     @Override
                     public void run() {
