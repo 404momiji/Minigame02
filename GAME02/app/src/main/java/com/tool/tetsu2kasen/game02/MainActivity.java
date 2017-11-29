@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -85,13 +86,16 @@ public class MainActivity extends Activity implements SensorEventListener {
         //カウントを初期化
         nwcot=0;
         //プレイヤーを指定位置に設定する
-        txtv.setTranslationX(plcenter);
+        gz.setTranslationX(plcenter);
+        //txtv.setTranslationX(plcenter);
 
         //TXを初期化しなおす
-        TX = txtv.getTranslationX();
+        //TX = txtv.getTranslationX();
+        TX = gz.getTranslationX();
 
         nst.setVisibility(View.INVISIBLE);
-        txtv.setTranslationX(plcenter);
+        //txtv.setTranslationX(plcenter);
+        gz.setTranslationX(plcenter);
         outed = false;
         mTimer = new Timer(false);
         mTimer.schedule(new TimerTask() {
@@ -152,7 +156,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     public float ST(float tx) {
         if (outed == false) {
-            txtv.setTranslationX(tx);
+            gz.setTranslationX(tx);
+            //txtv.setTranslationX(tx);
         }
         return 0;
     }
@@ -197,6 +202,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     //NOW statusとるお
     TextView nst;
     TextView nkr;
+    ImageView gz;
     public float TX = 0;
     public float nTX = 0;
 
@@ -205,6 +211,8 @@ public class MainActivity extends Activity implements SensorEventListener {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         ANMED=true;
         //ハンドラー取得すりゅ♥
@@ -221,22 +229,24 @@ public class MainActivity extends Activity implements SensorEventListener {
         width = disp.getWidth();
         //センサーマネジャーからインスタンスをしゅとくすりゅぅうぅぅぅぅうぅ(はーと)
         manager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         dbgv = (TextView) findViewById(R.id.textView5);
         txtv = (TextView) findViewById(R.id.myView2);
         nkr =  (TextView) findViewById(R.id.NOKORI);
         nst = (TextView) findViewById(R.id.nowst);
+        gz = (ImageView)findViewById(R.id.imageView4);
 
-        TX = txtv.getTranslationX();
+        TX=gz.getTranslationX();
+        //TX = txtv.getTranslationX();
         center = width / 2;
-        plcenter = center - 10;
+        plcenter = center - 35;
 
         //プレイヤーを指定位置に設定する
-        txtv.setTranslationX(plcenter);
+        //txtv.setTranslationX(plcenter);
+        gz.setTranslationX(plcenter);
 
         //TXを初期化しなおす
-        TX = txtv.getTranslationX();
+        //TX = txtv.getTranslationX();
+        TX= gz.getTranslationX();
 
         outleftpad = (width - stage) / 2;
         outrigpad = outleftpad + stage;
@@ -247,7 +257,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         if (outed == false) {
             if (TX < width - 20) {
                 TX = TX + weg;
-                txtv.setTranslationX(TX);
+                gz.setTranslationX(TX);
+                //txtv.setTranslationX(TX);
             }
         }
     }
@@ -257,7 +268,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         if (outed == false) {
             if (TX > 0) {
                 TX = TX +weg;
-                txtv.setTranslationX(TX);
+                gz.setTranslationX(TX);
+                //txtv.setTranslationX(TX);
             }
         }
     }
@@ -306,7 +318,7 @@ public class MainActivity extends Activity implements SensorEventListener {
             dbgv.setText("TX:" + TX);
 
             if(!outed) {
-                if (TX >= outleftpad && TX <= outrigpad) {
+                if (TX >= outleftpad-70 && TX <= outrigpad-60) {
                 } else {
                     Log.d("AAA", "アウトを検知");
                     nst.setTextColor(Color.RED);
