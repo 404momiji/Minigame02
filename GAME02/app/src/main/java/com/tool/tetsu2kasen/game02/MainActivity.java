@@ -1,9 +1,12 @@
-﻿/*
+package com.tool.tetsu2kasen.game02;
+
+/*
 //Next do 残り時間を表示する
 //
 */
 
-package com.tool.tetsu2kasen.game02;
+
+//com.tool.tetsu2kasen.game02;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -35,15 +38,20 @@ public class MainActivity extends Activity implements SensorEventListener {
     float outrigpad;
     float center;
     float plcenter;
+    int mvcot=0;
     final int actm=20;//20周期で終了（）
 
+    boolean ANMED =true;
     public int act =0;
 
     final float stage = 500;
+    String DBGV="";
     boolean outed = true;
     final int count = 50;//25秒間
     int nwcot = 0;
+    int awcot= 0;
     public int mTime;
+    int inbol =0;
 
     final int nmcount = 50;
 
@@ -72,6 +80,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     public void oc(View v) {
+        mvcot=0;
 
         //カウントを初期化
         nwcot=0;
@@ -94,11 +103,38 @@ public class MainActivity extends Activity implements SensorEventListener {
                         if (outed) {
                             cancel();
                         }
+                        if(ANMED==true){
+                            if((nwcot%3)==0&&!(nwcot==0)){
 
-                        Random random = new Random();
-                        rand = random.nextInt(20);
-                        rand = (rand - 10) * 10;
-                        ANM(rand);
+                                if(mvcot==0){
+                                    Random bol = new Random();
+
+                                    inbol = bol.nextInt(1);
+                                    if(inbol==0){
+                                        TX=outleftpad-5;
+                                        ST(TX);
+                                    }else if(inbol==1){
+                                        TX=outrigpad+5;
+                                        ST(TX);}
+                                }else{
+                                    mvcot=0;
+                                }
+                            }
+                            ANMED=false;
+                            Random random = new Random();
+
+                            rand = random.nextInt(20);
+                            if(rand==0){rand = random.nextInt(20);}
+                            nkr.setText(rand+":RAND");
+                            if(10>rand){
+                                rand=rand*-1;
+                            }else if(rand==10){
+                                rand=0;
+                            }else if(10<rand){
+                                rand=rand-10;
+                            }
+                            ANM(rand);
+                        }
                         //TX = TX + rand;
                         //↓移動処理
                         //ST(TX);
@@ -121,9 +157,9 @@ public class MainActivity extends Activity implements SensorEventListener {
         return 0;
     }
     public float ANM(float wei){
+        awcot=1;
 
-
-
+        act=1;
         final int actm=20;//20周期で終了（）
 
         W=wei/20;
@@ -136,19 +172,19 @@ public class MainActivity extends Activity implements SensorEventListener {
                     @Override
                     public void run() {
 
-
-                        act++;
-                        TX=(W*nwcot)+TX;
+                         act++;
+                        TX=(W*awcot)+TX;
                         ST(TX);
                         if (act >= actm) {
+                            ANMED=true;
                             cancel();
                         }
-                        nwcot++;
+                        awcot++;
                     }
                 });
 
             }
-        }, 0, 25);
+        }, 0, 50);
 
 
         return 0;
@@ -160,6 +196,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     TextView dbgv;
     //NOW statusとるお
     TextView nst;
+    TextView nkr;
     public float TX = 0;
     public float nTX = 0;
 
@@ -169,9 +206,12 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-
+        ANMED=true;
         //ハンドラー取得すりゅ♥
         mHandler = new Handler();
+        //バグの原因っぽい（下が抜けてた）
+        aHandler = new Handler();
+
         //横画面固定
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         //Windowマネージャをよびだしゅぅぅぅぅぅぅぅぅ
@@ -185,7 +225,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         setContentView(R.layout.activity_main);
         dbgv = (TextView) findViewById(R.id.textView5);
         txtv = (TextView) findViewById(R.id.myView2);
-
+        nkr =  (TextView) findViewById(R.id.NOKORI);
         nst = (TextView) findViewById(R.id.nowst);
 
         TX = txtv.getTranslationX();
@@ -203,20 +243,20 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     }
 
-    public void aclk() {
+    public void aclk(float weg) {
         if (outed == false) {
             if (TX < width - 20) {
-                TX = TX + 5;
+                TX = TX + weg;
                 txtv.setTranslationX(TX);
             }
         }
     }
 
-    public void bclk() {
+    public void bclk(float weg) {
         //nTX
         if (outed == false) {
             if (TX > 0) {
-                TX = TX - 5;
+                TX = TX +weg;
                 txtv.setTranslationX(TX);
             }
         }
@@ -257,9 +297,11 @@ public class MainActivity extends Activity implements SensorEventListener {
             //Log.i("AAA",String.valueOf(nsy));
 
             if (nsy >= 4.0f) {
-                aclk();
+                mvcot++;
+                aclk(nsy);
             } else if (nsy <= -4.0f) {
-                bclk();
+                mvcot++;
+                bclk(nsy);
             }
             dbgv.setText("TX:" + TX);
 
