@@ -39,24 +39,24 @@ public class MainActivity extends Activity implements SensorEventListener {
     float outrigpad;
     float center;
     float plcenter;
-    int mvcot=0;
-    final int actm=20;//20周期で終了（）
+    int mvcot = 0;
+    final int actm = 20;//20周期で終了（）
 
-    boolean ANMED =true;
-    public int act =0;
+    boolean ANMED = true;
+    public int act = 0;
 
     final float stage = 500;
-    String DBGV="";
+    String DBGV = "";
     boolean outed = true;
     final int count = 50;//25秒間
     int nwcot = 0;
-    int awcot= 0;
+    int awcot = 0;
     public int mTime;
-    int inbol =0;
+    int inbol = 0;
 
     final int nmcount = 50;
 
-    float W =0;
+    float W = 0;
     int taped = 0;
     Handler mHandler;//るいぱんこ
     Handler aHandler;//アニメーション用ハンドラ
@@ -69,7 +69,18 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     private SensorManager manager;
 
-    public void clear(){
+    public int width = 0;
+    TextView txtv;
+    //debugviewのインスタンスをしゅとくすりゅぅうぅぅぅぅうぅ
+    TextView dbgv;
+    //NOW statusとるお
+    TextView nst;
+    TextView nkr;
+    ImageView gz;
+    public float TX = 0;
+    public float nTX = 0;
+
+    public void clear() {
         //Clear
         nst.setTextColor(Color.YELLOW);
         nst.setText("くりあです♥");
@@ -80,11 +91,58 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     }
 
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        ANMED = true;
+        //ハンドラー取得すりゅ♥
+        mHandler = new Handler();
+        //バグの原因っぽい（下が抜けてた）
+        aHandler = new Handler();
+
+        //横画面固定
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //Windowマネージャをよびだしゅぅぅぅぅぅぅぅぅ
+        WindowManager wm = getWindowManager();
+        //Dispのインスタンスを取得すりゅううううう
+        Display disp = wm.getDefaultDisplay();
+        width = disp.getWidth();
+        //センサーマネジャーからインスタンスをしゅとくすりゅぅうぅぅぅぅうぅ(はーと)
+        manager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        dbgv = (TextView) findViewById(R.id.textView5);
+        txtv = (TextView) findViewById(R.id.myView2);
+        nkr = (TextView) findViewById(R.id.NOKORI);
+        nst = (TextView) findViewById(R.id.nowst);
+        gz = (ImageView) findViewById(R.id.imageView4);
+
+        TX = gz.getTranslationX();
+        //TX = txtv.getTranslationX();
+        center = width / 2;
+        plcenter = center - 35;
+
+        //プレイヤーを指定位置に設定する
+        //txtv.setTranslationX(plcenter);
+        gz.setTranslationX(plcenter);
+
+        //TXを初期化しなおす
+        //TX = txtv.getTranslationX();
+        TX = gz.getTranslationX();
+
+        outleftpad = (width - stage) / 2;
+        outrigpad = outleftpad + stage;
+
+    }
+
     public void oc(View v) {
-        mvcot=0;
+        mvcot = 0;
 
         //カウントを初期化
-        nwcot=0;
+        nwcot = 0;
         //プレイヤーを指定位置に設定する
         gz.setTranslationX(plcenter);
         //txtv.setTranslationX(plcenter);
@@ -107,35 +165,38 @@ public class MainActivity extends Activity implements SensorEventListener {
                         if (outed) {
                             cancel();
                         }
-                        if(ANMED==true){
-                            if((nwcot%3)==0&&!(nwcot==0)){
+                        if (ANMED == true) {
+                            if ((nwcot % 3) == 0 && !(nwcot == 0)) {
 
-                                if(mvcot==0){
+                                if (mvcot == 0) {
                                     Random bol = new Random();
 
                                     inbol = bol.nextInt(1);
-                                    if(inbol==0){
-                                        TX=outleftpad-5;
+                                    if (inbol == 0) {
+                                        TX = outleftpad - 5;
                                         ST(TX);
-                                    }else if(inbol==1){
-                                        TX=outrigpad+5;
-                                        ST(TX);}
-                                }else{
-                                    mvcot=0;
+                                    } else if (inbol == 1) {
+                                        TX = outrigpad + 5;
+                                        ST(TX);
+                                    }
+                                } else {
+                                    mvcot = 0;
                                 }
                             }
-                            ANMED=false;
+                            ANMED = false;
                             Random random = new Random();
 
                             rand = random.nextInt(20);
-                            if(rand==0){rand = random.nextInt(20);}
-                            nkr.setText(rand+":RAND");
-                            if(10>rand){
-                                rand=rand*-1;
-                            }else if(rand==10){
-                                rand=0;
-                            }else if(10<rand){
-                                rand=rand-10;
+                            if (rand == 0) {
+                                rand = random.nextInt(20);
+                            }
+                            nkr.setText(rand + ":RAND");
+                            if (10 > rand) {
+                                rand = rand * -1;
+                            } else if (rand == 10) {
+                                rand = 0;
+                            } else if (10 < rand) {
+                                rand = rand - 10;
                             }
                             ANM(rand);
                         }
@@ -161,13 +222,14 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
         return 0;
     }
-    public float ANM(float wei){
-        awcot=1;
 
-        act=1;
-        final int actm=20;//20周期で終了（）
+    public float ANM(float wei) {
+        awcot = 1;
 
-        W=wei/20;
+        act = 1;
+        final int actm = 20;//20周期で終了（）
+
+        W = wei / 20;
         float anmct;
         aTimer = new Timer(false);
         aTimer.schedule(new TimerTask() {
@@ -177,11 +239,11 @@ public class MainActivity extends Activity implements SensorEventListener {
                     @Override
                     public void run() {
 
-                         act++;
-                        TX=(W*awcot)+TX;
+                        act++;
+                        TX = (W * awcot) + TX;
                         ST(TX);
                         if (act >= actm) {
-                            ANMED=true;
+                            ANMED = true;
                             cancel();
                         }
                         awcot++;
@@ -195,63 +257,6 @@ public class MainActivity extends Activity implements SensorEventListener {
         return 0;
     }
 
-    public int width = 0;
-    TextView txtv;
-    //debugviewのインスタンスをしゅとくすりゅぅうぅぅぅぅうぅ
-    TextView dbgv;
-    //NOW statusとるお
-    TextView nst;
-    TextView nkr;
-    ImageView gz;
-    public float TX = 0;
-    public float nTX = 0;
-
-    /**
-     * Called when the activity is first created.
-     */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        ANMED=true;
-        //ハンドラー取得すりゅ♥
-        mHandler = new Handler();
-        //バグの原因っぽい（下が抜けてた）
-        aHandler = new Handler();
-
-        //横画面固定
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        //Windowマネージャをよびだしゅぅぅぅぅぅぅぅぅ
-        WindowManager wm = getWindowManager();
-        //Dispのインスタンスを取得すりゅううううう
-        Display disp = wm.getDefaultDisplay();
-        width = disp.getWidth();
-        //センサーマネジャーからインスタンスをしゅとくすりゅぅうぅぅぅぅうぅ(はーと)
-        manager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        dbgv = (TextView) findViewById(R.id.textView5);
-        txtv = (TextView) findViewById(R.id.myView2);
-        nkr =  (TextView) findViewById(R.id.NOKORI);
-        nst = (TextView) findViewById(R.id.nowst);
-        gz = (ImageView)findViewById(R.id.imageView4);
-
-        TX=gz.getTranslationX();
-        //TX = txtv.getTranslationX();
-        center = width / 2;
-        plcenter = center - 35;
-
-        //プレイヤーを指定位置に設定する
-        //txtv.setTranslationX(plcenter);
-        gz.setTranslationX(plcenter);
-
-        //TXを初期化しなおす
-        //TX = txtv.getTranslationX();
-        TX= gz.getTranslationX();
-
-        outleftpad = (width - stage) / 2;
-        outrigpad = outleftpad + stage;
-
-    }
 
     public void aclk(float weg) {
         if (outed == false) {
@@ -267,7 +272,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         //nTX
         if (outed == false) {
             if (TX > 0) {
-                TX = TX +weg;
+                TX = TX + weg;
                 gz.setTranslationX(TX);
                 //txtv.setTranslationX(TX);
             }
@@ -317,8 +322,8 @@ public class MainActivity extends Activity implements SensorEventListener {
             }
             dbgv.setText("TX:" + TX);
 
-            if(!outed) {
-                if (TX >= outleftpad-70 && TX <= outrigpad-60) {
+            if (!outed) {
+                if (TX >= outleftpad - 70 && TX <= outrigpad - 60) {
                 } else {
                     Log.d("AAA", "アウトを検知");
                     nst.setTextColor(Color.RED);
