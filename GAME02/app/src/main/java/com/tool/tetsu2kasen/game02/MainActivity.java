@@ -35,24 +35,23 @@ public class MainActivity extends Activity implements SensorEventListener {
     float nsx;
     float nsy;
     float nsz;
-    float outleftpad;
-    float outrigpad;
+    float outLeftPad;
+    float outRightPad;
     float center;
-    float plcenter;
-    int mvcot = 0;
-    final int actm = 20;//20周期で終了（）
+    float playerPosition;
+    int moveCount = 0;
 
-    boolean ANMED = true;
-    public int act = 0;
+    boolean animated = true;
+    public int animationCount = 0;
 
     final float stage = 500;
     String DBGV = "";
     boolean outed = true;
     final int count = 50;//25秒間
-    int nwcot = 0;
-    int awcot = 0;
+    int nowCount = 0;
+    int playerPositionCount = 0;
     public int mTime;
-    int inbol = 0;
+    int resetPosition = 0;
 
     final int nmcount = 50;
 
@@ -74,22 +73,13 @@ public class MainActivity extends Activity implements SensorEventListener {
     //debugviewのインスタンスをしゅとくすりゅぅうぅぅぅぅうぅ
     TextView dbgv;
     //NOW statusとるお
-    TextView nst;
+    TextView clearText;
     TextView nkr;
-    ImageView gz;
-    public float TX = 0;
+    ImageView playerImage;
+    public float playerNowPositionX = 0;
     public float nTX = 0;
 
-    public void clear() {
-        //Clear
-        nst.setTextColor(Color.YELLOW);
-        nst.setText("くりあです♥");
-        nst.setVisibility(View.VISIBLE);
-        outed = true;
-        nwcot = 0;
 
-
-    }
 
     /**
      * Called when the activity is first created.
@@ -99,7 +89,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ANMED = true;
+        animated = true;
         //ハンドラー取得すりゅ♥
         mHandler = new Handler();
         //バグの原因っぽい（下が抜けてた）
@@ -117,43 +107,43 @@ public class MainActivity extends Activity implements SensorEventListener {
         dbgv = (TextView) findViewById(R.id.textView5);
         txtv = (TextView) findViewById(R.id.myView2);
         nkr = (TextView) findViewById(R.id.NOKORI);
-        nst = (TextView) findViewById(R.id.nowst);
-        gz = (ImageView) findViewById(R.id.imageView4);
+        clearText = (TextView) findViewById(R.id.nowst);
+        playerImage = (ImageView) findViewById(R.id.imageView4);
 
-        TX = gz.getTranslationX();
+        playerNowPositionX = playerImage.getTranslationX();
         //TX = txtv.getTranslationX();
         center = width / 2;
-        plcenter = center - 35;
+        playerPosition = center - 35;
 
         //プレイヤーを指定位置に設定する
         //txtv.setTranslationX(plcenter);
-        gz.setTranslationX(plcenter);
+        playerImage.setTranslationX(playerPosition);
 
         //TXを初期化しなおす
         //TX = txtv.getTranslationX();
-        TX = gz.getTranslationX();
+        playerNowPositionX = playerImage.getTranslationX();
 
-        outleftpad = (width - stage) / 2;
-        outrigpad = outleftpad + stage;
+        outLeftPad = (width - stage) / 2;
+        outRightPad = outLeftPad + stage;
 
     }
 
-    public void oc(View v) {
-        mvcot = 0;
+    public void start(View v) {
+        moveCount = 0;
 
         //カウントを初期化
-        nwcot = 0;
+        nowCount = 0;
         //プレイヤーを指定位置に設定する
-        gz.setTranslationX(plcenter);
+        playerImage.setTranslationX(playerPosition);
         //txtv.setTranslationX(plcenter);
 
-        //TXを初期化しなおす
-        //TX = txtv.getTranslationX();
-        TX = gz.getTranslationX();
+        //playerNowPositionXを初期化しなおす
+        //playerNowPositionX = txtv.getTranslationX();
+        playerNowPositionX = playerImage.getTranslationX();
 
-        nst.setVisibility(View.INVISIBLE);
+        clearText.setVisibility(View.INVISIBLE);
         //txtv.setTranslationX(plcenter);
-        gz.setTranslationX(plcenter);
+        playerImage.setTranslationX(playerPosition);
         outed = false;
         mTimer = new Timer(false);
         mTimer.schedule(new TimerTask() {
@@ -165,25 +155,25 @@ public class MainActivity extends Activity implements SensorEventListener {
                         if (outed) {
                             cancel();
                         }
-                        if (ANMED == true) {
-                            if ((nwcot % 3) == 0 && !(nwcot == 0)) {
+                        if (animated == true) {
+                            if ((nowCount % 3) == 0 && !(nowCount == 0)) {
 
-                                if (mvcot == 0) {
+                                if (moveCount == 0) {
                                     Random bol = new Random();
 
-                                    inbol = bol.nextInt(1);
-                                    if (inbol == 0) {
-                                        TX = outleftpad - 5;
-                                        ST(TX);
-                                    } else if (inbol == 1) {
-                                        TX = outrigpad + 5;
-                                        ST(TX);
+                                    resetPosition = bol.nextInt(1);
+                                    if (resetPosition == 0) {
+                                        playerNowPositionX = outLeftPad - 5;
+                                        setPlayerPosition(playerNowPositionX);
+                                    } else if (resetPosition == 1) {
+                                        playerNowPositionX = outRightPad + 5;
+                                        setPlayerPosition(playerNowPositionX);
                                     }
                                 } else {
-                                    mvcot = 0;
+                                    moveCount = 0;
                                 }
                             }
-                            ANMED = false;
+                            animated = false;
                             Random random = new Random();
 
                             rand = random.nextInt(20);
@@ -198,35 +188,45 @@ public class MainActivity extends Activity implements SensorEventListener {
                             } else if (10 < rand) {
                                 rand = rand - 10;
                             }
-                            ANM(rand);
+                            animation(rand);
                         }
                         //TX = TX + rand;
                         //↓移動処理
                         //ST(TX);
-                        if (nwcot >= 50) {
+                        if (nowCount >= 50) {
                             clear();
                             cancel();
                         }
-                        nwcot++;
+                        nowCount++;
                     }
                 });
 
             }
         }, 0, 500);
     }
+    public void clear() {
+        //Clear
+        clearText.setTextColor(Color.YELLOW);
+        clearText.setText("くりあです♥");
+        clearText.setVisibility(View.VISIBLE);
+        outed = true;
+        nowCount = 0;
 
-    public float ST(float tx) {
+
+    }
+
+    public float setPlayerPosition(float tx) {
         if (outed == false) {
-            gz.setTranslationX(tx);
+            playerImage.setTranslationX(tx);
             //txtv.setTranslationX(tx);
         }
         return 0;
     }
 
-    public float ANM(float wei) {
-        awcot = 1;
+    public float animation(float wei) {
+        playerPositionCount = 1;
 
-        act = 1;
+        animationCount = 1;
         final int actm = 20;//20周期で終了（）
 
         W = wei / 20;
@@ -239,14 +239,14 @@ public class MainActivity extends Activity implements SensorEventListener {
                     @Override
                     public void run() {
 
-                        act++;
-                        TX = (W * awcot) + TX;
-                        ST(TX);
-                        if (act >= actm) {
-                            ANMED = true;
+                        animationCount++;
+                        playerNowPositionX = (W * playerPositionCount) + playerNowPositionX;
+                        setPlayerPosition(playerNowPositionX);
+                        if (animationCount >= actm) {
+                            animated = true;
                             cancel();
                         }
-                        awcot++;
+                        playerPositionCount++;
                     }
                 });
 
@@ -260,9 +260,9 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     public void aclk(float weg) {
         if (outed == false) {
-            if (TX < width - 20) {
-                TX = TX + weg;
-                gz.setTranslationX(TX);
+            if (playerNowPositionX < width - 20) {
+                playerNowPositionX = playerNowPositionX + weg;
+                playerImage.setTranslationX(playerNowPositionX);
                 //txtv.setTranslationX(TX);
             }
         }
@@ -271,9 +271,9 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void bclk(float weg) {
         //nTX
         if (outed == false) {
-            if (TX > 0) {
-                TX = TX + weg;
-                gz.setTranslationX(TX);
+            if (playerNowPositionX > 0) {
+                playerNowPositionX = playerNowPositionX + weg;
+                playerImage.setTranslationX(playerNowPositionX);
                 //txtv.setTranslationX(TX);
             }
         }
@@ -314,21 +314,21 @@ public class MainActivity extends Activity implements SensorEventListener {
             //Log.i("AAA",String.valueOf(nsy));
 
             if (nsy >= 4.0f) {
-                mvcot++;
+                moveCount++;
                 aclk(nsy);
             } else if (nsy <= -4.0f) {
-                mvcot++;
+                moveCount++;
                 bclk(nsy);
             }
-            dbgv.setText("TX:" + TX);
+            dbgv.setText("playerNowPositionX:" + playerNowPositionX);
 
             if (!outed) {
-                if (TX >= outleftpad - 70 && TX <= outrigpad - 60) {
+                if (playerNowPositionX >= outLeftPad - 70 && playerNowPositionX <= outRightPad - 60) {
                 } else {
                     Log.d("AAA", "アウトを検知");
-                    nst.setTextColor(Color.RED);
-                    nst.setText("アウトです♥");
-                    nst.setVisibility(View.VISIBLE);
+                    clearText.setTextColor(Color.RED);
+                    clearText.setText("アウトです♥");
+                    clearText.setVisibility(View.VISIBLE);
                     //out
                     outed = true;
                 }
