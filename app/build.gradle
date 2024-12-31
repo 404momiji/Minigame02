@@ -1,15 +1,19 @@
 apply plugin: 'com.android.application'
-
 android {
     namespace 'moe.yak.game.minigame01'
     defaultConfig {
         applicationId "moe.yak.game.minigame01"
-        compileSdkVersion 34
-        minSdkVersion 15
+
+        compileSdk 34
+        minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     buildTypes {
         release {
@@ -17,6 +21,8 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
 
 dependencies {
@@ -26,6 +32,8 @@ dependencies {
     implementation libs.activity
     implementation libs.constraintlayout
     testImplementation libs.junit
+    testImplementation libs.runner
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    testImplementation libs.robolectric
 }
