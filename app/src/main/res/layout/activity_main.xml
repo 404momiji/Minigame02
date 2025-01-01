@@ -71,7 +71,8 @@
         android:text=""
         android:textAlignment="textEnd"
         android:textSize="24sp"
-        tools:visibility="invisible" />
+        tools:visibility="invisible"
+        tools:ignore="RelativeOverlap" />
 
     <TextView
         android:id="@+id/nowst"
